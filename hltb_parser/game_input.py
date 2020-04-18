@@ -11,6 +11,11 @@ import urllib.request
 
 from html.parser import HTMLParser
 
+from general_library.serialization_library.serializer import Serializer
+from general_library.configuration_library import config
+from general_library.formatting_library import formatting_utils
+from general_library.string_library.levenshtein_distance import get_similar_items
+
 # Replaceable symbols
 REPLACE_SYMBOLS = ["\\", "/", "`", "*", "_", "{", "}", "[", "]", "(", ",",
                    ")", ">", "#", "+", "-", ".", "!", "$", "\'", "\""]
@@ -28,6 +33,18 @@ def trim_whitespaces(input_line: str):
     """Replaces all consequent whitespace characters with one space"""
 
     return " ".join(input_line.split())
+
+
+def find_similar_games(games_list_name):
+    games_list = Serializer(games_list_name, config.RESOURCES_FOLDER).deserialize()
+    games_dictionary = formatting_utils.from_csv(games_list, ",")
+    games_list = []
+    for game in games_dictionary:
+        games_list.append(game["Name"])
+    similar_games = get_similar_items(games_list, 0.25)
+    for tested_game, similar_game in similar_games:
+        print("Found potentially similar games: ", tested_game, " , ", similar_game)
+
 
 def get_unique_games_list():
     # games_list = Serializer("gamesList.csv", config.RESOURCES_FOLDER).deserialize()
