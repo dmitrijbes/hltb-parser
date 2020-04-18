@@ -41,7 +41,7 @@ def find_similar_games(games_list_name):
     games_list = []
     for game in games_dictionary:
         games_list.append(game["Name"])
-    similar_games = get_similar_items(games_list, 0.25)
+    similar_games = get_similar_items(games_list, 0.60)
     for tested_game, similar_game in similar_games:
         print("Found potentially similar games: ", tested_game, " , ", similar_game)
 
