@@ -13,6 +13,6 @@ sys.path.append(str(module_location))
 general_library_location = Path(__file__).resolve().parents[2]/'general-library'
 sys.path.append(str(general_library_location))
 
-from hltb_parser.game_input import find_similar_games
+from hltb_parser.game_input import get_games_length
 
-find_similar_games("games_list.csv")
+get_games_length("games_list.csv")
