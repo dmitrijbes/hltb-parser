@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+
+# Project
+input/*
+!input/games_example.csv
+
+output/*
+!output/games_info_example.csv
+
