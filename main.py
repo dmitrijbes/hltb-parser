@@ -22,7 +22,12 @@ from hltb_parser import get_games, parse_games_info, save_games_info, find_simil
 def parse_args():
     arg_parser = ArgumentParser()
     arg_parser.add_argument(
-        '-s', '--similar', dest='similar', action='store_true', help='Find similar games from the input list of games.')
+        "-s",
+        "--similar",
+        dest="similar",
+        action="store_true",
+        help="Find similar games from the input list of games.",
+    )
     return arg_parser.parse_args()
 
 
@@ -30,23 +35,23 @@ def main():
     print("Starting HLTB parser..")
     args = parse_args()
 
-    print('Parsing input list of games..')
+    print("Parsing input list of games..")
     games = get_games()
 
     if args.similar:
-        print('Looking for similar games..')
+        print("Looking for similar games..")
         find_similar_games(games)
 
         print("All similar games have been found! Thank You for waiting!")
     else:
-        print('Parsing games info..')
+        print("Parsing games info..")
         games_info = parse_games_info(games)
 
-        print('Saving output games info..')
+        print("Saving output games info..")
         save_games_info(games_info)
 
         print("Parsing finished! Thank You for waiting!")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

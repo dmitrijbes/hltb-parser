@@ -47,16 +47,16 @@ def query_hltb(game):
     user_agent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3"
     url = "https://howlongtobeat.com/search_results.php"
     query = {
-        'queryString': game,
-        't': 'games',
-        'page': '1',
-        'sorthead': 'popular',
-        'sortd': 'Normal Order',
-        'plat': '',
-        'length_type': 'main',
-        'length_min': '',
-        'length_max': '',
-        'detail': '0'
+        "queryString": game,
+        "t": "games",
+        "page": "1",
+        "sorthead": "popular",
+        "sortd": "Normal Order",
+        "plat": "",
+        "length_type": "main",
+        "length_min": "",
+        "length_max": "",
+        "detail": "0",
     }
 
     req = request.Request(url, parse.urlencode(query).encode())
@@ -66,7 +66,7 @@ def query_hltb(game):
     return hltb_response
 
 
-class GameInfo():
+class GameInfo:
     def __init__(self, input_name):
         self.input_name = input_name
         self.sanitized_name = sanitize_name(input_name)
@@ -76,7 +76,15 @@ class GameInfo():
         self.completionist_length = 0
 
     def get_csv_row(self):
-        return ",".join([self.input_name, self.parsed_name, str(self.main_length), str(self.main_extra_length), str(self.completionist_length)])
+        return ",".join(
+            [
+                self.input_name,
+                self.parsed_name,
+                str(self.main_length),
+                str(self.main_extra_length),
+                str(self.completionist_length),
+            ]
+        )
 
 
 def trim_whitespaces(input_text):
@@ -123,8 +131,7 @@ def is_matching_game(response_game_details, game_info):
 
 def get_matching_game_info(response_games, game_info):
     for response_game in response_games:
-        response_game_details = response_game.find(
-            class_="search_list_details")
+        response_game_details = response_game.find(class_="search_list_details")
         if not is_matching_game(response_game_details, game_info):
             continue
 
@@ -132,14 +139,15 @@ def get_matching_game_info(response_games, game_info):
 
         response_game_length = response_game_details.find_all(class_="center")
         if len(response_game_length) >= 1:
-            game_info.main_length = get_length_number(
-                response_game_length[0].string)
+            game_info.main_length = get_length_number(response_game_length[0].string)
         if len(response_game_length) >= 2:
             game_info.main_extra_length = get_length_number(
-                response_game_length[1].string)
+                response_game_length[1].string
+            )
         if len(response_game_length) >= 3:
             game_info.completionist_length = get_length_number(
-                response_game_length[2].string)
+                response_game_length[2].string
+            )
 
 
 def get_length_number(game_length):
@@ -148,7 +156,7 @@ def get_length_number(game_length):
         length_number = float(length.group())
 
         if game_length.find("Mins") != -1:
-            length_number = round((float(length_number)/60), 2)
+            length_number = round((float(length_number) / 60), 2)
         if game_length.find("½") != -1:
             length_number += 0.5
         return length_number
@@ -157,16 +165,17 @@ def get_length_number(game_length):
 
 
 def save_games_info(games_info):
-    output_games_info_path = sep.join(
-        [".", "output", "games_info.csv"])
-    with open(output_games_info_path, 'w', encoding="utf-8") as games_info_file:
+    output_games_info_path = sep.join([".", "output", "games_info.csv"])
+    with open(output_games_info_path, "w", encoding="utf-8") as games_info_file:
         games_info_file.write(get_game_info_header() + "\n")
         for game_info in games_info:
             games_info_file.write(game_info.get_csv_row() + "\n")
 
 
 def get_game_info_header():
-    game_info_header = 'Input Name,Parsed Name,Main Length,Main Extra Length,Completionist Length'
+    game_info_header = (
+        "Input Name,Parsed Name,Main Length,Main Extra Length,Completionist Length"
+    )
 
     return game_info_header
 
@@ -175,14 +184,44 @@ def filter_similar_games(similar_games):
     filtered_similar_games = []
 
     for game_a, game_b in similar_games:
-        game_a_parts = game_a.split(' ')
-        game_b_parts = game_b.split(' ')
+        game_a_parts = game_a.split(" ")
+        game_b_parts = game_b.split(" ")
         diff = [i for i in game_a_parts if i not in game_b_parts]
 
         if not diff:
             continue
-        if len(diff) == 1 and diff[0] in ("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV",
-                                          "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"):
+        if len(diff) == 1 and diff[0] in (
+            "I",
+            "II",
+            "III",
+            "IV",
+            "V",
+            "VI",
+            "VII",
+            "VIII",
+            "IX",
+            "X",
+            "XI",
+            "XII",
+            "XIII",
+            "XIV",
+            "XV",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+        ):
             continue
         filtered_similar_games.append((game_a, game_b))
 
@@ -194,7 +233,6 @@ def find_similar_games(games):
     similar_games = filter_similar_games(similar_games)
 
     output_similar_games_path = sep.join([".", "output", "similar_games.txt"])
-    with open(output_similar_games_path, 'w', encoding="utf-8") as similar_games_file:
+    with open(output_similar_games_path, "w", encoding="utf-8") as similar_games_file:
         for similar_game in similar_games:
-            similar_games_file.write(
-                similar_game[0] + " <=> " + similar_game[1] + "\n")
+            similar_games_file.write(similar_game[0] + " <=> " + similar_game[1] + "\n")

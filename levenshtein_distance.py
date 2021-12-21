@@ -30,10 +30,13 @@ def get_levenshtein_distance(first_string: str, second_string: str):
         return len(first_string)
     cost = 0 if first_string[-1] == second_string[-1] else 1
 
-    distance = min([get_levenshtein_distance(first_string[:-1], second_string)+1,
-                    get_levenshtein_distance(
-                        first_string, second_string[:-1])+1,
-                    get_levenshtein_distance(first_string[:-1], second_string[:-1]) + cost])
+    distance = min(
+        [
+            get_levenshtein_distance(first_string[:-1], second_string) + 1,
+            get_levenshtein_distance(first_string, second_string[:-1]) + 1,
+            get_levenshtein_distance(first_string[:-1], second_string[:-1]) + cost,
+        ]
+    )
 
     return distance
 
@@ -63,8 +66,9 @@ def get_simple_distance(first_string: str, second_string: str):
 
 
 def is_similar(tested_item, similar_item, similarity_percent):
-    min_allowed_distance = len(tested_item) - \
-        round(len(tested_item)*similarity_percent)
+    min_allowed_distance = len(tested_item) - round(
+        len(tested_item) * similarity_percent
+    )
 
     if tested_item is similar_item:
         return True
