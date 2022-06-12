@@ -61,6 +61,7 @@ def query_hltb(game):
 
     req = request.Request(url, parse.urlencode(query).encode())
     req.add_header("User-Agent", user_agent)
+    req.add_header("Referer", "https://howlongtobeat.com/")
     hltb_response = request.urlopen(req).read()
 
     return hltb_response
