@@ -16,10 +16,13 @@ from os import sep
 from urllib import request, parse
 from re import sub, search
 from re import compile as reg_compile
+from time import sleep
 
 from bs4 import BeautifulSoup
 
 from levenshtein_distance import is_similar, get_similar_items
+
+PARSING_TIMEOUT = 0.1
 
 
 def get_games():
@@ -39,6 +42,9 @@ def parse_games_info(games):
         games_processed += 1
         if not games_processed % 100:
             print(str(games_processed), " games already processed!")
+
+        # Timeout for an ethical parsing, to decrease server load.
+        sleep(PARSING_TIMEOUT)
 
     return games_info
 
@@ -62,7 +68,12 @@ def query_hltb(game):
     req = request.Request(url, parse.urlencode(query).encode())
     req.add_header("User-Agent", user_agent)
     req.add_header("Referer", "https://howlongtobeat.com/")
-    hltb_response = request.urlopen(req).read()
+
+    hltb_response = None
+    try:
+        hltb_response = request.urlopen(req).read()
+    except:
+        pass
 
     return hltb_response
 
